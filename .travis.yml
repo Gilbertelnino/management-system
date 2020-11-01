@@ -1,0 +1,16 @@
+language: node_js
+node_js:
+  - "stable"
+install: npm install
+services:
+  - postgresql
+  - redis-server
+cache:
+  npm: false
+
+before_script:
+  - psql -c 'create database testing_db;' -U postgres
+script:
+  - npm run migrate:test
+  - npm test
+after_success: npm run coveralls
