@@ -4,13 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --exec babel-node server/index.js",
+    "migrate": "sequelize db:migrate",
+    "migrate:undo": "sequelize db:migrate:undo",
+    "migrate:test": "NODE_ENV=test sequelize db:migrate",
+    "seed:test": "cross-env NODE_ENV=test npx sequelize db:seed:all",
+    "dev": "npm run migrate && nodemon --exec babel-node -r dotenv/config  server",
     "clean": "rm -rf build && mkdir build",
     "build-babel": "babel -d ./build ./server -s",
     "build": "npm run clean && npm run build-babel",
     "start": "npm run build && node ./build/index.js",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
-    "test": "mocha server/tests/*.spec.js --require @babel/register --timeout=30000 --exit"
+    "test": "cross-env NODE_ENV=test nyc --reporter=html --reporter=text mocha --require @babel/register --require dotenv/config  src/tests/*.spec.js --timeout 15000 --exit || true"
   },
   "repository": {
     "type": "git",
@@ -29,6 +33,7 @@
     "@babel/node": "^7.12.1",
     "@babel/polyfill": "^7.12.1",
     "@babel/preset-env": "^7.12.1",
+    "@sendgrid/mail": "^7.3.0",
     "babel-eslint": "^10.1.0",
     "babel-plugin-istanbul": "^6.0.0",
     "bcryptjs": "^2.4.3",
@@ -40,6 +45,7 @@
     "joi": "^17.2.1",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.20",
+    "mailgen": "^2.0.14",
     "passport": "^0.4.1",
     "passport-facebook": "^3.0.0",
     "passport-google-oauth20": "^2.0.0",
